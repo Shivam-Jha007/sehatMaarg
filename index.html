@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Symptom-to-Specialist Mapper</title>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="header-title">
+        <h1>&#9764; Symptom-to-Specialist Mapper</h1>
+        <p class="subtitle">Find the right doctor &amp; nearby clinics in seconds</p>
+      </div>
+      <div class="header-auth">
+        <button id="auth-login-btn" class="auth-btn">Login / Sign Up</button>
+        <div id="auth-user-info" class="hidden">
+          <button id="auth-profile-btn" class="auth-btn">&#128100; Profile</button>
+          <button id="auth-logout-btn" class="auth-btn auth-btn-outline">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login / Sign Up Modal -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" id="auth-modal-close">&times;</button>
+      <h2 id="auth-modal-title">Login</h2>
+      <form id="auth-form" autocomplete="off">
+        <label for="auth-email">Email</label>
+        <input type="email" id="auth-email" required placeholder="you@example.com" />
+        <label for="auth-password">Password</label>
+        <input type="password" id="auth-password" required placeholder="Min 6 characters" minlength="6" />
+        <p id="auth-error" class="auth-error hidden"></p>
+        <button type="submit" id="auth-submit-btn" class="btn-primary">Login</button>
+      </form>
+      <p class="auth-toggle">
+        <span id="auth-toggle-text">Don't have an account?</span>
+        <a href="#" id="auth-toggle-link">Sign Up</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Profile / Emergency Contacts Modal -->
+  <div id="profile-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" id="profile-modal-close">&times;</button>
+      <h2>Emergency Contacts</h2>
+      <p class="modal-desc">Add up to 2 emergency contacts. They can be notified in high-risk situations.</p>
+      <form id="contacts-form" autocomplete="off">
+        <label for="contact1">Emergency Contact 1</label>
+        <input type="tel" id="contact1" placeholder="+91 1234567890" />
+        <label for="contact2">Emergency Contact 2</label>
+        <input type="tel" id="contact2" placeholder="+91 1234567890" />
+        <p id="contacts-status" class="contacts-status hidden"></p>
+        <button type="submit" id="save-contacts-btn" class="btn-primary">Save Contacts</button>
+      </form>
+    </div>
+  </div>
+
+  <main>
+    <!-- Symptom Input Section -->
+    <section id="input-section" class="card">
+      <h2>Describe Your Symptoms</h2>
+
+      <form id="symptom-form" autocomplete="off">
+        <label for="symptoms">Symptoms <span class="required">*</span></label>
+        <div class="input-with-mic">
+          <textarea
+            id="symptoms"
+            name="symptoms"
+            rows="3"
+            placeholder="e.g. chest pain, sweating, nausea"
+            required
+          ></textarea>
+          <button type="button" id="mic-btn" title="Speak your symptoms">
+            &#127908;
+          </button>
+        </div>
+        <p id="mic-status" class="mic-status hidden"></p>
+
+        <div class="optional-fields">
+          <div class="field-group">
+            <label for="age">Age (optional)</label>
+            <input
+              type="number"
+              id="age"
+              name="age"
+              min="0"
+              max="150"
+              placeholder="e.g. 45"
+            />
+          </div>
+
+          <div class="field-group">
+            <label for="conditions">Existing conditions (optional)</label>
+            <input
+              type="text"
+              id="conditions"
+              name="conditions"
+              placeholder="e.g. diabetes, hypertension"
+            />
+          </div>
+        </div>
+
+        <button type="submit" id="submit-btn">Analyze Symptoms</button>
+      </form>
+    </section>
+
+    <!-- Loading Indicator -->
+    <section id="loading" class="card hidden">
+      <div class="spinner"></div>
+      <p>Analyzing your symptoms&hellip;</p>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="card hidden">
+      <h2>Recommendation</h2>
+
+      <div id="result-content">
+        <div class="result-row">
+          <span class="label">Specialist:</span>
+          <span id="specialist" class="value"></span>
+        </div>
+        <div class="result-row">
+          <span class="label">Urgency:</span>
+          <span id="urgency" class="value badge"></span>
+        </div>
+        <div class="result-row explanation">
+          <span class="label">Explanation:</span>
+          <p id="explanation" class="value"></p>
+        </div>
+      </div>
+
+      <p class="disclaimer">
+        &#9888; <strong>Disclaimer:</strong> This tool does not provide medical
+        diagnosis. Please consult a healthcare professional.
+      </p>
+    </section>
+
+    <!-- Emergency Warning Section -->
+    <section id="emergency-section" class="card emergency-card hidden">
+      <h2>&#9888;&#65039; Possible Medical Emergency</h2>
+      <p class="emergency-text">
+        Your symptoms may require <strong>immediate medical attention</strong>.
+      </p>
+      <ul class="emergency-advice">
+        <li>Please seek help from a <strong>nearby hospital</strong> immediately.</li>
+        <li>Contact <strong>emergency medical services</strong> if necessary.</li>
+        <li>Do not delay — call your local emergency number now.</li>
+      </ul>
+      <button type="button" id="show-hospitals-btn">Show Nearest Hospitals</button>
+
+      <!-- Emergency Contact Notification (visible only for logged-in users) -->
+      <div id="emergency-contacts-notify" class="emergency-notify hidden">
+        <h3>Notify Emergency Contact</h3>
+        <div id="notify-contact1" class="notify-contact hidden">
+          <span class="notify-label" id="notify-contact1-number"></span>
+          <a id="notify-call1" href="#" class="notify-btn notify-call">&#128222; Call</a>
+          <a id="notify-sms1" href="#" class="notify-btn notify-sms">&#128172; Send SMS</a>
+        </div>
+        <div id="notify-contact2" class="notify-contact hidden">
+          <span class="notify-label" id="notify-contact2-number"></span>
+          <a id="notify-call2" href="#" class="notify-btn notify-call">&#128222; Call</a>
+          <a id="notify-sms2" href="#" class="notify-btn notify-sms">&#128172; Send SMS</a>
+        </div>
+        <p id="notify-no-contacts" class="hidden" style="font-size:0.9rem;color:#842029;">
+          No emergency contacts saved. <a href="#" id="notify-add-contacts">Add contacts</a> to enable notifications.
+        </p>
+      </div>
+
+      <p class="disclaimer">
+        &#9888; <strong>Disclaimer:</strong> This tool does not provide medical
+        diagnosis. Always consult a qualified healthcare professional.
+      </p>
+    </section>
+
+    <!-- Map Section -->
+    <section id="map-section" class="card hidden">
+      <h2>Nearby Clinics &amp; Hospitals</h2>
+      <div class="location-bar">
+        <input
+          type="text"
+          id="location-input"
+          placeholder="Wrong location? Type your city or area..."
+        />
+        <button type="button" id="location-btn">Search</button>
+      </div>
+      <div class="legend">
+        <span class="legend-item budget">&#9679; Budget</span>
+        <span class="legend-item moderate">&#9679; Moderate</span>
+        <span class="legend-item premium">&#9679; Premium</span>
+      </div>
+      <div id="map"></div>
+    </section>
+
+    <!-- Error Section -->
+    <section id="error-section" class="card hidden">
+      <p id="error-message" class="error-text"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Symptom-to-Specialist Mapper &mdash; Not a substitute for professional medical advice.</p>
+  </footer>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <!-- App Scripts -->
+  <script src="config.js"></script>
+  <script src="ai.js"></script>
+  <script src="auth.js"></script>
+  <script src="map.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Secrets — never commit this file
+config.js
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Editor
+.vscode/
