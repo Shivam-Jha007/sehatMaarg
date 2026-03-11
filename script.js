@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Read and validate inputs
     const symptoms = document.getElementById("symptoms").value.trim();
     const age = document.getElementById("age").value.trim();
+    const gender = document.getElementById("gender").value;
     const conditions = document.getElementById("conditions").value.trim();
 
     if (!symptoms) {
@@ -37,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Step 1: Analyze symptoms with AI
-      const result = await AI.analyzeSymptoms(symptoms, age, conditions);
+      const result = await AI.analyzeSymptoms(symptoms, age, gender, conditions);
 
       // Step 2: Display recommendation
       displayResult(result);
@@ -50,8 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isEmergency) {
         // Show emergency warning
         show(emergencySection);
-        // Show emergency contact notification options
-        showEmergencyContacts();
         // Scroll to emergency section
         emergencySection.scrollIntoView({ behavior: "smooth", block: "start" });
         // Auto-load hospitals immediately
@@ -292,221 +291,5 @@ document.addEventListener("DOMContentLoaded", () => {
     hide(errorSection);
     hide(loadingSection);
     hide(emergencySection);
-    hide(document.getElementById("emergency-contacts-notify"));
-  }
-
-  // ===== Auth UI =====
-  const authLoginBtn = document.getElementById("auth-login-btn");
-  const authUserInfo = document.getElementById("auth-user-info");
-  const authProfileBtn = document.getElementById("auth-profile-btn");
-  const authLogoutBtn = document.getElementById("auth-logout-btn");
-  const authModal = document.getElementById("auth-modal");
-  const authModalClose = document.getElementById("auth-modal-close");
-  const authForm = document.getElementById("auth-form");
-  const authModalTitle = document.getElementById("auth-modal-title");
-  const authSubmitBtn = document.getElementById("auth-submit-btn");
-  const authToggleText = document.getElementById("auth-toggle-text");
-  const authToggleLink = document.getElementById("auth-toggle-link");
-  const authError = document.getElementById("auth-error");
-  const profileModal = document.getElementById("profile-modal");
-  const profileModalClose = document.getElementById("profile-modal-close");
-  const contactsForm = document.getElementById("contacts-form");
-  const contactsStatus = document.getElementById("contacts-status");
-  const notifyAddContacts = document.getElementById("notify-add-contacts");
-
-  let isSignUpMode = false;
-
-  // Initialize auth on page load
-  if (Auth.init()) {
-    Auth.getSession().then((user) => updateAuthUI(user));
-  }
-
-  function updateAuthUI(user) {
-    if (user) {
-      hide(authLoginBtn);
-      show(authUserInfo);
-    } else {
-      show(authLoginBtn);
-      hide(authUserInfo);
-    }
-  }
-
-  // Open login modal
-  authLoginBtn.addEventListener("click", () => {
-    if (!Auth.isConfigured()) {
-      alert("Supabase is not configured. Please set your Supabase URL and key in auth.js.");
-      return;
-    }
-    isSignUpMode = false;
-    authModalTitle.textContent = "Login";
-    authSubmitBtn.textContent = "Login";
-    authToggleText.textContent = "Don't have an account?";
-    authToggleLink.textContent = "Sign Up";
-    hide(authError);
-    authForm.reset();
-    show(authModal);
-  });
-
-  // Toggle login / sign up
-  authToggleLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    isSignUpMode = !isSignUpMode;
-    if (isSignUpMode) {
-      authModalTitle.textContent = "Sign Up";
-      authSubmitBtn.textContent = "Sign Up";
-      authToggleText.textContent = "Already have an account?";
-      authToggleLink.textContent = "Login";
-    } else {
-      authModalTitle.textContent = "Login";
-      authSubmitBtn.textContent = "Login";
-      authToggleText.textContent = "Don't have an account?";
-      authToggleLink.textContent = "Sign Up";
-    }
-    hide(authError);
-  });
-
-  // Submit login / sign up
-  authForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("auth-email").value.trim();
-    const password = document.getElementById("auth-password").value;
-    hide(authError);
-    authSubmitBtn.disabled = true;
-
-    try {
-      if (isSignUpMode) {
-        await Auth.signUp(email, password);
-        alert("Account created! Check your email to confirm, then log in.");
-      } else {
-        await Auth.logIn(email, password);
-      }
-      updateAuthUI(Auth.isLoggedIn());
-      hide(authModal);
-    } catch (err) {
-      authError.textContent = err.message;
-      show(authError);
-    } finally {
-      authSubmitBtn.disabled = false;
-    }
-  });
-
-  // Close auth modal
-  authModalClose.addEventListener("click", () => hide(authModal));
-  authModal.addEventListener("click", (e) => {
-    if (e.target === authModal) hide(authModal);
-  });
-
-  // Logout
-  authLogoutBtn.addEventListener("click", async () => {
-    try {
-      await Auth.logOut();
-      updateAuthUI(false);
-    } catch (err) {
-      alert("Logout failed: " + err.message);
-    }
-  });
-
-  // Open profile / contacts modal
-  authProfileBtn.addEventListener("click", async () => {
-    hide(contactsStatus);
-    const contacts = await Auth.loadContacts();
-    document.getElementById("contact1").value = contacts.contact1;
-    document.getElementById("contact2").value = contacts.contact2;
-    show(profileModal);
-  });
-
-  // Save contacts
-  contactsForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const c1 = document.getElementById("contact1").value.trim();
-    const c2 = document.getElementById("contact2").value.trim();
-    hide(contactsStatus);
-
-    try {
-      await Auth.saveContacts(c1, c2);
-      contactsStatus.textContent = "Contacts saved!";
-      contactsStatus.className = "contacts-status success";
-      show(contactsStatus);
-    } catch (err) {
-      contactsStatus.textContent = "Error: " + err.message;
-      contactsStatus.className = "contacts-status error";
-      show(contactsStatus);
-    }
-  });
-
-  // Close profile modal
-  profileModalClose.addEventListener("click", () => hide(profileModal));
-  profileModal.addEventListener("click", (e) => {
-    if (e.target === profileModal) hide(profileModal);
-  });
-
-  // "Add contacts" link inside emergency notify
-  notifyAddContacts.addEventListener("click", (e) => {
-    e.preventDefault();
-    authProfileBtn.click();
-  });
-
-  // ===== Emergency Contact Notification =====
-  /**
-   * Show emergency contact notification options if user is logged in
-   * and has saved contacts. Called when high urgency is detected.
-   */
-  async function showEmergencyContacts() {
-    const notifySection = document.getElementById("emergency-contacts-notify");
-    const notifyC1 = document.getElementById("notify-contact1");
-    const notifyC2 = document.getElementById("notify-contact2");
-    const notifyNone = document.getElementById("notify-no-contacts");
-
-    // Only show for logged-in users
-    if (!Auth.isConfigured() || !Auth.isLoggedIn()) {
-      hide(notifySection);
-      return;
-    }
-
-    show(notifySection);
-    hide(notifyC1);
-    hide(notifyC2);
-    hide(notifyNone);
-
-    const contacts = await Auth.loadContacts();
-
-    // Get user's current location for SMS
-    let locationLink = "";
-    try {
-      const pos = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
-      });
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-      locationLink = `https://maps.google.com/?q=${lat},${lng}`;
-    } catch {
-      locationLink = "(location unavailable)";
-    }
-
-    const smsBody = encodeURIComponent(
-      "Possible medical emergency detected. Please check on me. My location: " + locationLink
-    );
-
-    let hasContacts = false;
-
-    if (contacts.contact1) {
-      hasContacts = true;
-      document.getElementById("notify-contact1-number").textContent = contacts.contact1;
-      document.getElementById("notify-call1").href = "tel:" + contacts.contact1;
-      document.getElementById("notify-sms1").href = "sms:" + contacts.contact1 + "?body=" + smsBody;
-      show(notifyC1);
-    }
-
-    if (contacts.contact2) {
-      hasContacts = true;
-      document.getElementById("notify-contact2-number").textContent = contacts.contact2;
-      document.getElementById("notify-call2").href = "tel:" + contacts.contact2;
-      document.getElementById("notify-sms2").href = "sms:" + contacts.contact2 + "?body=" + smsBody;
-      show(notifyC2);
-    }
-
-    if (!hasContacts) {
-      show(notifyNone);
-    }
   }
 });

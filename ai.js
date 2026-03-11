@@ -28,9 +28,10 @@ Respond ONLY in this exact JSON format — no markdown, no code fences:
   /**
    * Build the user message from form inputs.
    */
-  function buildUserMessage(symptoms, age, conditions) {
+  function buildUserMessage(symptoms, age, gender, conditions) {
     let msg = `Symptoms: ${symptoms}`;
     if (age) msg += `\nAge: ${age}`;
+    if (gender) msg += `\nGender: ${gender}`;
     if (conditions) msg += `\nExisting conditions: ${conditions}`;
     return msg;
   }
@@ -39,10 +40,10 @@ Respond ONLY in this exact JSON format — no markdown, no code fences:
    * Send symptoms to Gemini and return parsed recommendation.
    * Returns { specialist, urgency, explanation }
    */
-  async function analyzeSymptoms(symptoms, age, conditions) {
+  async function analyzeSymptoms(symptoms, age, gender, conditions) {
    
 
-    const userMessage = buildUserMessage(symptoms, age, conditions);
+    const userMessage = buildUserMessage(symptoms, age, gender, conditions);
 
     const requestBody = {
       system_instruction: {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Symptom-to-Specialist Mapper</title>
+  <title>sehatMaarg</title>
 
   <!-- Leaflet CSS -->
   <link
@@ -20,55 +20,14 @@
   <header>
     <div class="header-inner">
       <div class="header-title">
-        <h1>&#9764; Symptom-to-Specialist Mapper</h1>
-        <p class="subtitle">Find the right doctor &amp; nearby clinics in seconds</p>
-      </div>
-      <div class="header-auth">
-        <button id="auth-login-btn" class="auth-btn">Login / Sign Up</button>
-        <div id="auth-user-info" class="hidden">
-          <button id="auth-profile-btn" class="auth-btn">&#128100; Profile</button>
-          <button id="auth-logout-btn" class="auth-btn auth-btn-outline">Logout</button>
+        <img src="logo.png" alt="SehatMaarg" class="logo" />
+        <div>
+          <h1><span class="brand-sehat">Sehat</span><span class="brand-maarg">Maarg</span></h1>
+          <p class="subtitle">Find the right doctor &amp; nearby clinics in seconds</p>
         </div>
       </div>
     </div>
   </header>
-
-  <!-- Login / Sign Up Modal -->
-  <div id="auth-modal" class="modal-overlay hidden">
-    <div class="modal">
-      <button class="modal-close" id="auth-modal-close">&times;</button>
-      <h2 id="auth-modal-title">Login</h2>
-      <form id="auth-form" autocomplete="off">
-        <label for="auth-email">Email</label>
-        <input type="email" id="auth-email" required placeholder="you@example.com" />
-        <label for="auth-password">Password</label>
-        <input type="password" id="auth-password" required placeholder="Min 6 characters" minlength="6" />
-        <p id="auth-error" class="auth-error hidden"></p>
-        <button type="submit" id="auth-submit-btn" class="btn-primary">Login</button>
-      </form>
-      <p class="auth-toggle">
-        <span id="auth-toggle-text">Don't have an account?</span>
-        <a href="#" id="auth-toggle-link">Sign Up</a>
-      </p>
-    </div>
-  </div>
-
-  <!-- Profile / Emergency Contacts Modal -->
-  <div id="profile-modal" class="modal-overlay hidden">
-    <div class="modal">
-      <button class="modal-close" id="profile-modal-close">&times;</button>
-      <h2>Emergency Contacts</h2>
-      <p class="modal-desc">Add up to 2 emergency contacts. They can be notified in high-risk situations.</p>
-      <form id="contacts-form" autocomplete="off">
-        <label for="contact1">Emergency Contact 1</label>
-        <input type="tel" id="contact1" placeholder="+91 1234567890" />
-        <label for="contact2">Emergency Contact 2</label>
-        <input type="tel" id="contact2" placeholder="+91 1234567890" />
-        <p id="contacts-status" class="contacts-status hidden"></p>
-        <button type="submit" id="save-contacts-btn" class="btn-primary">Save Contacts</button>
-      </form>
-    </div>
-  </div>
 
   <main>
     <!-- Symptom Input Section -->
@@ -102,6 +61,16 @@
               max="150"
               placeholder="e.g. 45"
             />
+          </div>
+
+          <div class="field-group">
+            <label for="gender">Gender (optional)</label>
+            <select id="gender" name="gender">
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
 
           <div class="field-group">
@@ -163,24 +132,6 @@
       </ul>
       <button type="button" id="show-hospitals-btn">Show Nearest Hospitals</button>
 
-      <!-- Emergency Contact Notification (visible only for logged-in users) -->
-      <div id="emergency-contacts-notify" class="emergency-notify hidden">
-        <h3>Notify Emergency Contact</h3>
-        <div id="notify-contact1" class="notify-contact hidden">
-          <span class="notify-label" id="notify-contact1-number"></span>
-          <a id="notify-call1" href="#" class="notify-btn notify-call">&#128222; Call</a>
-          <a id="notify-sms1" href="#" class="notify-btn notify-sms">&#128172; Send SMS</a>
-        </div>
-        <div id="notify-contact2" class="notify-contact hidden">
-          <span class="notify-label" id="notify-contact2-number"></span>
-          <a id="notify-call2" href="#" class="notify-btn notify-call">&#128222; Call</a>
-          <a id="notify-sms2" href="#" class="notify-btn notify-sms">&#128172; Send SMS</a>
-        </div>
-        <p id="notify-no-contacts" class="hidden" style="font-size:0.9rem;color:#842029;">
-          No emergency contacts saved. <a href="#" id="notify-add-contacts">Add contacts</a> to enable notifications.
-        </p>
-      </div>
-
       <p class="disclaimer">
         &#9888; <strong>Disclaimer:</strong> This tool does not provide medical
         diagnosis. Always consult a qualified healthcare professional.
@@ -213,11 +164,8 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 Symptom-to-Specialist Mapper &mdash; Not a substitute for professional medical advice.</p>
+    <p>&copy; 2026 SehatMaarg &mdash; Not a substitute for professional medical advice.</p>
   </footer>
-
-  <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Leaflet JS -->
   <script
@@ -229,7 +177,6 @@
   <!-- App Scripts -->
   <script src="config.js"></script>
   <script src="ai.js"></script>
-  <script src="auth.js"></script>
   <script src="map.js"></script>
   <script src="script.js"></script>
 </body>

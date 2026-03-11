@@ -66,14 +66,35 @@
     async function saveContacts(contact1, contact2) {
         if (!currentUser) throw new Error("Not logged in.");
 
-        const { error } = await supabase
+        // Check if profile row exists
+        const { data: existing } = await supabase
         .from("profiles")
-        .upsert({
+        .select("id")
+        .eq("id", currentUser.id)
+        .single();
+
+        let error;
+        if (existing) {
+        // Update existing row
+        ({ error } = await supabase
+            .from("profiles")
+            .update({
+            email: currentUser.email,
+            contact1: contact1 || null,
+            contact2: contact2 || null,
+            })
+            .eq("id", currentUser.id));
+        } else {
+        // Insert new row
+        ({ error } = await supabase
+            .from("profiles")
+            .insert({
             id: currentUser.id,
             email: currentUser.email,
             contact1: contact1 || null,
             contact2: contact2 || null,
-        });
+            }));
+        }
 
         if (error) throw new Error(error.message);
         console.log("[Auth] Contacts saved");
@@ -94,6 +115,17 @@
 
         if (error || !data) return { contact1: "", contact2: "" };
         return { contact1: data.contact1 || "", contact2: data.contact2 || "" };
+    }
+
+    /**
+     * Send a password reset email.
+     */
+    async function resetPassword(email) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + window.location.pathname,
+        });
+        if (error) throw new Error(error.message);
+        console.log("[Auth] Password reset email sent to:", email);
     }
 
     /**
@@ -123,6 +155,7 @@
         signUp,
         logIn,
         logOut,
+        resetPassword,
         getSession,
         saveContacts,
         loadContacts,

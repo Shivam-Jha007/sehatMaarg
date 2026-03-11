@@ -1,0 +1,8 @@
+#!/bin/sh
+cat > config.js << EOF
+const CONFIG = {
+  GEMINI_API_KEY: "$GEMINI_API_KEY",
+  SUPABASE_URL: "$SUPABASE_URL",
+  SUPABASE_ANON_KEY: "$SUPABASE_ANON_KEY",
+};
+EOF
