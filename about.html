@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — SehatMaarg</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .about-page {
+      max-width: 720px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      flex: 1;
+    }
+
+    .about-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0, 102, 179, 0.07);
+      border: 1px solid rgba(0, 168, 147, 0.08);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-card h2 {
+      color: #0066B3;
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .about-card p {
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .about-card ul {
+      margin: 0.5rem 0 1rem 1.25rem;
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .about-card ul li {
+      margin-bottom: 0.3rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.6rem 1.5rem;
+      background: linear-gradient(135deg, #0066B3, #00A893);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+
+    .back-link:hover {
+      opacity: 0.9;
+    }
+
+    .team-grid {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+
+    .team-member {
+      flex: 1;
+      min-width: 200px;
+      text-align: center;
+      padding: 1rem;
+      background: #f7fafa;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 168, 147, 0.1);
+    }
+
+    .team-member .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0066B3, #00A893);
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.5rem;
+    }
+
+    .team-member h4 {
+      color: #0B2545;
+      font-size: 0.95rem;
+    }
+
+    .team-member p {
+      color: #6b7c93;
+      font-size: 0.82rem;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-title">
+        <img src="logo.png" alt="SehatMaarg" class="logo" />
+        <div>
+          <h1><span class="brand-sehat">Sehat</span><span class="brand-maarg">Maarg</span></h1>
+          <p class="subtitle">Find the right doctor &amp; nearby clinics in seconds</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="about-page">
+    <div class="about-card">
+      <h2>About SehatMaarg</h2>
+      <p>
+        <strong>SehatMaarg</strong> (meaning <em>"Path to Health"</em>) is a lightweight web application
+        that helps users identify the right medical specialist based on their symptoms. Our AI-powered
+        triage assistant analyzes your symptoms and instantly recommends the type of doctor you should
+        visit, along with an urgency level and nearby clinics on a map.
+      </p>
+      <p>
+        We believe that access to basic healthcare guidance should be quick, free, and available to everyone —
+        no app installations, no sign-ups, just open and go.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <h2>What We Do</h2>
+      <ul>
+        <li><strong>Symptom Analysis</strong> — Describe your symptoms in plain language or use voice input, and our AI suggests the right specialist.</li>
+        <li><strong>Urgency Assessment</strong> — Get an urgency rating (Low, Medium, High) to help you prioritize care.</li>
+        <li><strong>Nearby Clinics &amp; Hospitals</strong> — See clinics and hospitals near you on an interactive map with cost tiers.</li>
+        <li><strong>Emergency Detection</strong> — High-urgency symptoms trigger a dedicated emergency mode showing the nearest hospitals.</li>
+        <li><strong>Voice Input</strong> — Speak your symptoms instead of typing for quick, hands-free entry.</li>
+      </ul>
+    </div>
+
+    <div class="about-card">
+      <h2>How It Works</h2>
+      <p>
+        1. Enter your symptoms (text or voice).<br />
+        2. Optionally add your age, gender, and existing conditions.<br />
+        3. Our AI analyzes your input and recommends a specialist.<br />
+        4. A map loads with nearby clinics and hospitals based on your location.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <h2>Important Disclaimer</h2>
+      <p>
+        SehatMaarg does <strong>not</strong> provide medical diagnoses. It is designed as a guidance
+        tool to help you find the right type of specialist. Always consult a qualified healthcare
+        professional for medical advice, diagnosis, or treatment. In case of a medical emergency,
+        call your local emergency number immediately.
+      </p>
+    </div>
+
+    <div class="about-card">
+      <h2>Built With</h2>
+      <ul>
+        <li>Google Gemini AI for symptom analysis</li>
+        <li>Leaflet.js &amp; OpenStreetMap for interactive maps</li>
+        <li>Overpass API for clinic/hospital data</li>
+        <li>Web Speech API for voice input</li>
+        <li>Vanilla HTML, CSS &amp; JavaScript — no frameworks</li>
+      </ul>
+    </div>
+
+    <a href="index.html" class="back-link">&larr; Back to SehatMaarg</a>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 SehatMaarg &mdash; Not a substitute for professional medical advice.</p>
+  </footer>
+</body>
+</html>

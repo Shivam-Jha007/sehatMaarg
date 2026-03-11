@@ -428,9 +428,22 @@ footer {
   text-align: center;
   padding: 1rem;
   font-size: 0.8rem;
-  color: #6b7c93;
   background: #0B2545;
   color: rgba(255, 255, 255, 0.6);
+}
+
+.about-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #00A893;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.about-link:hover {
+  color: #fff;
 }
 
 /* ===== Utility ===== */
